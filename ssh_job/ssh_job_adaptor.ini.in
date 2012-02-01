@@ -1,0 +1,13 @@
+
+[saga.adaptors.ssh_job]
+  name            = ssh_job
+
+[saga.adaptors.ssh_job.preferences]
+  gsissh_bin      = @SAGA_GSISSH@
+  gsissh_opt      = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0
+
+  ssh_bin         = @SAGA_SSH@
+  ssh_opt         = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0
+
+  ssh_test_remote = true
+

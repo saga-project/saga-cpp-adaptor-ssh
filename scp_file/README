@@ -1,0 +1,68 @@
+
+::SAGA DOCUMENTATION FILE::
+
+:ADAPTOR NAME:
+
+   Ssh Scp Scp_File Adaptor
+
+
+:AUTHORS:
+
+  Copyright (c) 2011-2012 Andre Merzky <andre@merzky.net>
+
+
+:LICENSE:
+
+  Boost License 1.0
+
+
+:ADAPTOR LIBRARY NAME:
+  
+   saga_adaptor_scp_file.so (dylib)
+
+
+:IMPLEMENTS PACKAGE:
+ 
+  - saga::filesystem
+
+
+:DESCRIPTION:
+
+  The adaptor provides means to manage and access remote files via ssh and scp.
+
+
+:URL SCHEMES:
+
+  supported URL schemes are:
+
+    any://
+    scp://
+
+
+:REQUIRES:
+
+  In order to build and use the adaptor, the following components must be
+  available:
+
+  - ssh
+  - scp
+
+
+
+:CONFIGURE OPTIONS:
+
+
+
+:INI FILE:
+
+  saga_adaptor_scp_file.ini
+
+
+:INI OPTIONS:
+
+  none
+
+
+:KNOWN ISSUES:
+
+ 

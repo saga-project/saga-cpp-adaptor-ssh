@@ -1,0 +1,7 @@
+
+For now, ssh tests assume REMOTEHOST is set to a ssh server, 
+otherwise localhost is used.
+
+You must have sshfuse installed (for file tests) and ssh keys
+in their default location.
+

@@ -1,0 +1,55 @@
+
+ Notes
+ -----
+
+  For now, ssh tests assume REMOTEHOST is set to a ssh server,
+  otherwise localhost is used.
+
+  You must have sshfuse installed (for file tests) and ssh keys
+  in their default location.
+
+
+ Performance
+ -----------
+
+  The ssh file adaptor accepts local file:// and remote ssh://
+  based URLs, and, of course, any:// based URLs.  All ops which
+  end up on the local file system are transparently performed,
+  all operations which end up on non-ssh remote systems are
+  eventually declined.
+
+  The adaptor performs *all* operations by internally calling
+  SAGA, so it in fact only translates URLs back and forth, and
+  invokes SAGA on these translated URLs (*).  That architecture
+  comes with an intrinsic overhead, and effectively doubles the
+  SAGA intrinsic latencies.  In most cases that should not
+  matter compared to the netowrk latencies involved, but in rare
+  cases it can add up.  For example, consider a slow remote
+  adaptor which needs time to decline an operation - that
+  latencu may occure once on the top SAGA level, and once more
+  inside the SAGA op called by the ssh adaptor.
+
+
+ Fixes for Performance Issues
+ ----------------------------
+
+  A possible fix is to equip the local file adaptor with a local
+  context, and have the ssh adaptor use a session which only
+  contains that local context, and the ssh contexts.  This
+  should effectively limit the number of adaptors used inside
+  the ssh adaptor ops.  
+
+  Another option is to move all inter-adaptor operations on impl
+  package level (see discussion on list), which would allow the
+  ssh adaptor to more aggresively filter for ssh:// based URLs
+  only.
+
+  Other than that, there is not much more one can do, apart from
+  educating users that in particular the use of any:// based
+  URLs *can* come with a significant local performance overhead.
+
+
+
+(*) Well, of course the adaptor does more, such as mounting
+    remote ssh file systems for example.  But you got the idea
+    I hope.

@@ -1,0 +1,64 @@
+                    
+                      SAGA SSH Adaptors - Installation
+             <http://www.saga-project.org/download/adaptors/ssh>
+
+
+  For detailed informations on how to install SAGA, please refer 
+  to the documentation section on our website:
+
+    http://www.saga-project.org/documentation 
+
+
+  PREREQUISISTES:
+  
+  o SAGA Core Components
+    You have to install the SAGA Core Components before you can install the
+    Python Bindings. The Core Components are available on the SAGA website.
+
+  o Boost C++ Libraries >= 1.33
+    You need to have the Boost C++ libraries installed on your system. Many
+    systems already provide binary packages for them. If your system doesn't 
+    you can download the source from http://www.boost.org and build it yourself.
+    
+  o ssh command line tools
+    The ssh adaptors all need ssh and scp, the ssh_file adaptor also needs
+    sshfs.  Note that sshfs in turn needs fuse to be installed and enabled in
+    order to function properly.
+
+    If the ssh command line tools are not in your path, you can tell configure
+    where to find them, with the following options:
+
+    
+ 
+  BUILDING AND INSTALLING THE SSH ADAPTORS
+ 
+  The SSH Adaptors come with a configure/make-based buildsystem. There are 
+  some useful options for ./configure:
+
+    --boost-location=       The location of your Boost installation
+                            (e.g. /usr/local/packages/boost-1.42). You only
+                            need this option if boost is *not* installed in
+                            the default path (/usr/ or /usr/local
+
+      --with-ssh=           The paths to the ssh command line tools, in case 
+      --with-scp=           those cannot be found by configure via your  
+      --with-sshfs=         PATH environment,
+
+  For a complete list of configure options, you can type
+
+    ./configure --help
+ 
+  To configure, build and install the SSH Adaptors, make sure that 
+  $SAGA_LOCATION points to your SAGA Core Components installation and
+  execute ./configure and make:
+
+    $> export SAGA_LOCATION=/PATH/TO/SAGA_CORE_INSTALLATION
+    $> ./configure --with-boost=/BOOST/DIR/ --with-ssh=/PATH/TO/SSH ...
+    $> make
+    $> make install
+
+
+  Please help us to improve the quality of SAGA and file a bug report if you 
+  have encountered any problems with the build system. Our bug-tracking system 
+  can be found at: http://www.saga-project.org/developers/bugtracking
+

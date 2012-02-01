@@ -1,0 +1,51 @@
+
+::SAGA DOCUMENTATION FILE::
+
+:AUTHORS:
+
+  Copyright (c) 2009 Andre Merzky <andre@merzky.net>
+
+
+:LICENSE:
+
+  Distributed under the Boost Software License, Version 1.0.
+
+
+:DESCRIPTION:
+
+ The SSH job adaptor allows to run jobs on ssh backends.  These jobs are started
+ via the ssh command line client.  That in turn is started via the local job
+ adaptor.  Thus, the ssh job adaptor depends crucially on the local job adaptor.
+
+
+:CHANGELOG:
+
+  - initial version
+
+
+:REQUIRES:
+
+  All ssh adaptors require the ssh and scp command line tools.  If those are not
+  found in the path, configure can be told about alternative locations.  See
+  INFO file for the ssh proxy adaptor for some more details.
+
+
+:CONFIGURE OPTIONS:
+
+  | --with-ssh              path to ssh   binary [default=check] |\\
+  | --with-scp              path to scp   binary [default=check] |\\
+  | --with-sshfs            path to sshfs binary [default=check] |\\
+  
+
+:INI OPTIONS:
+
+  At the moment, SAGA does not allow to (easily) share ini options between
+  adaptors.  Thus, all ssh ini options are actually replicated between all ini
+  adaptors - this will be fixed at some point.  Up to then, however, the ini
+  documentation of the ssh context adaptor will cover the ini settings for *all*
+  ssh adaptors.  Additional ini options are described below.
+
+  - |ssh_test_remote| (default=true)\\ This flag enables additional tests for
+  hostname validity and executable existence.  These tests SHOULD be enabled,
+  but are time consuming -- so this flag allows to disable them.
+

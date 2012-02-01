@@ -1,0 +1,38 @@
+
+PACKAGE:  saga-adaptors-ssh
+VERSION:  1.0
+REVISION: $Revision: 780 $
+
+DEPENDENCIES:
+  saga-core
+  sshfs
+  ssh
+
+DIRS:
+  config/
+  external/
+  ssh_context/
+  ssh_job/
+  scp_file/
+  sshfs_file/
+  ssh_suite/
+
+FILES:
+  INSTALL
+  LICENSE
+  PACKAGE
+  CHANGES
+  INSTALL
+  LICENSE
+  Makefile
+  configure
+  configure.in
+
+PACKAGING:
+  deb-section:        devel
+  deb-priority:       optional
+  deb-essential:      no
+  deb-depends:        saga-core @SAGA_VERSION@ @DEB_DEPS@
+  deb-provides:       saga-adaptors-ssh
+  deb-description:    http://www.saga-project.org/download/adaptors/ssh
+

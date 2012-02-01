@@ -1,0 +1,51 @@
+#  Copyright (c) 2005-2007 Andre Merzky (andre@merzky.net)
+# 
+#  Distributed under the Boost Software License, Version 1.0. 
+#  (See accompanying file LICENSE.txt or copy at 
+#   http://www.boost.org/LICENSE_1_0.txt)
+
+# vim: ft=make
+
+ifndef MAKE_CFG_SSH_IN
+       MAKE_CFG_SSH_IN=yes
+
+SAGA_LOCATION                  = @SAGA_LOCATION@
+SAGA_CONFIGURE_OK              = @SAGA_CONFIGURE_OK@
+
+SAGA_PREFIX                    = @SAGA_PREFIX@
+SAGA_MODULE_PREFIX             = $(SAGA_PREFIX)
+SAGA_BIN_ROOT                  = @SAGA_BIN_ROOT@
+SAGA_SHS_ROOT                  = @SAGA_BIN_ROOT@
+SAGA_LIB_ROOT                  = @SAGA_LIB_ROOT@
+SAGA_HDR_ROOT                  = @SAGA_INC_ROOT@
+SAGA_DAT_ROOT                  = @SAGA_DAT_ROOT@
+SAGA_INI_ROOT                  = @SAGA_DAT_ROOT@
+SAGA_MAN_ROOT                  = @SAGA_MAN_ROOT@
+SAGA_MAK_ROOT                  = @SAGA_DAT_ROOT@/make
+SAGA_M4_ROOT                   = @SAGA_DAT_ROOT@/config
+
+SAGA_HAVE_GSISSH               = @HAVE_GSISSH@
+SAGA_HAVE_SSH                  = @HAVE_SSH@
+SAGA_HAVE_SCP                  = @HAVE_SCP@
+SAGA_HAVE_SSHFS                = @HAVE_SSHFS@
+
+SAGA_GSISSH                    = @SAGA_GSISSH@
+SAGA_SSH                       = @SAGA_SSH@
+SAGA_SCP                       = @SAGA_SCP@
+SAGA_SSHFS                     = @SAGA_SSHFS@
+
+SAGA_PACKAGE_VERSION           = @SAGA_PACKAGE_VERSION@
+
+BUILD_ADAPTOR_CONTEXT          = @BUILD_ADAPTOR_CONTEXT@
+BUILD_ADAPTOR_FILESYSTEM_SCP   = @BUILD_ADAPTOR_FILESYSTEM_SCP@
+BUILD_ADAPTOR_FILESYSTEM_SSHFS = @BUILD_ADAPTOR_FILESYSTEM_SSHFS@
+BUILD_ADAPTOR_JOB              = @BUILD_ADAPTOR_JOB@
+
+
+
+include $(SAGA_LOCATION)/share/saga/make/saga.util.mk
+
+SAGA_DEB_CONTROL              = @SAGA_DEB_CONTROL@
+
+endif # guard
+

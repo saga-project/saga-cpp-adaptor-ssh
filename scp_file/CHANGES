@@ -1,0 +1,16 @@
+                SAGA SSH/SCP File Adaptors
+
+               <http://saga.cct.lsu.edu/adaptors/ssh>
+                     - Release Changelog -
+
+  
+  Changes with SAGA SSH/SCP File Adaptor
+  --------------------------------------
+  
+  
+    Dec 14 2011
+
+    - initial code generation with 
+      'saga-adaptor-generator.pl -d . -s ssh -t file -n scp'
+
+

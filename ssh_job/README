@@ -1,0 +1,29 @@
+
+The ssh job adaptor creates a local job service instance, and
+submits remote job requests to that instance, as ssh jobs.
+
+Thus, 
+
+  saga::job::service js ("ssh://remote.host.net");
+  saga::job::job j = js.run_job ("/bin/touch /tmp/test");
+
+gets effectively translated into
+
+  saga::job::service js ("fork://localhost");
+  saga::job::job j = js.run_job ("/bin/ssh -i <key> <user>@remote.host.net /bin/touch /tmp/test");
+
+<key> and <user> come from the used ssh context in the current
+session (the js c'tor is trying to find a valid context for the
+given host, and will fail if non is available).
+
+main limitation of the current approach: signals are sent to the
+local ssh process, _not_ to the remotely started process.  That
+is probably not what the user wants.  That also holds for
+suspend/resume, which act on the local ssh process.
+
+reason: I simply do not know how to find the PID of the remote
+job - ssh does not report it.  BTW: using libssh would not solve
+that problem.  At the moment, I can't think of a clean solution.
+
+feedback: Andre Merzky <andre@merzky.net>
+

@@ -1,0 +1,106 @@
+
+::SAGA DOCUMENTATION FILE::
+
+:AUTHORS:
+
+  Copyright (c) 2009 Andre Merzky <andre@merzky.net>
+
+
+:LICENSE:
+
+  Distributed under the Boost Software License, Version 1.0.
+
+
+:DESCRIPTION:
+
+ The SSH context adaptor manages security credentials for ssh backends.  The
+ credentials are used by the other AWS-adaptors, and also by the suite of aws
+ adaptors.
+
+
+:CHANGELOG:
+
+  - initial version
+
+
+:REQUIRES:
+
+  All ssh adaptors require the ssh and scp command line tools.  If those are not
+  found in the path, configure can be told about alternative locations.  The ssh
+  file adaptor additionally requires fuse/sshfs to be installed, and the FUSE
+  module to be loaded into the kernel.
+
+  A good test for the ssh adaptors being operational is to run the command line
+  tools manually, like:
+
+    # preparation
+    mkdir /tmp/sshfs_test
+
+    # test
+    ssh localhost /bin/date
+    scp localhots:/etc/passwd /tmp/scp_test
+    sshfs localhost:/ /tmp/sshfs_test
+
+    # cleanup
+    rm     /tmp/scp_test
+    umount /tmp/sshfs_test
+    rmdir  /tmp/sshfs_test
+
+  If those commands work w/o failure, and w/o passwd prompt, the adaptors should
+  work, too, and should not need additional ini config parameters.
+
+
+:CONFIGURE OPTIONS:
+
+  | --with-ssh              path to ssh   binary [default=check] |\\
+  | --with-scp              path to scp   binary [default=check] |\\
+  | --with-sshfs            path to sshfs binary [default=check] |\\
+  
+
+:INI OPTIONS:
+
+  At the moment, SAGA does not allow to (easily) share ini options between
+  adaptors.  Thus, all ssh ini options are actually replicated between all ini
+  adaptors - this will be fixed at some point.  Up to then, however, the ini
+  documentation of the ssh context adaptor will cover the ini settings for *all*
+  ssh adaptors.
+
+
+  | [saga.adaptors.ssh_file]                                                       |\\
+  |   name            = ssh_file                                                   |\\
+  |                                                                                |\\
+  | [saga.adaptors.ssh_file.preferences]                                           |\\
+  |   ssh_bin         = /usr/bin/ssh                                               |\\
+  |   ssh_opt         = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0   |\\
+  |                                                                                |\\
+  |   scp_bin         = /usr/bin/scp                                               |\\
+  |   scp_opt         = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0   |\\
+  |                                                                                |\\
+  |   sshfs_bin       = /usr/bin/sshfs                                             |\\
+  |   sshfs_opt       = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 \ |\\
+  |                     -o workaround=nonodelay -o transform_symlinks              |\\
+  |                                                                                |\\
+  |   sshfs_mnt       = ${HOME}/.saga/adaptors/ssh/ssh_file/mnt/                   |\\
+  |   sshfs_keepalive = yes                                                        |\\
+  |   sshfs_ondemand  = yes                                                        |\\
+
+  The |transform_symlinks| option to sshfs is strongly recommended,
+  as otherwise the resolution of remote symlinks may be incorrectly
+  be resolved to point into the local file system, causing all kind
+  of wierd behaviour.
+
+  The |sshfs_keepalive| ini option will cause the |ssh_file| adaptor
+  to leave sshfs mounted file systems mounted, even when unloading.
+  If set to |false|, it will attempt to unmount those sshfs file
+  systems which have been mounted during the session.
+
+  Note that, by default, the option '|StrictHostKeyChecking=no|' is
+  passed to ssh.  This is a potential security gap - please refer to
+  the ssh manpage for the implications.
+
+  The above security related point (|StrictHostKeyChecking=no|') has
+  been implemented for the sake of the SAGA aws adaptors, which use
+  the ssh adaptor for job management and file access, but which have
+  to handle freshly instantiated virtual machines with incomplete ssh
+  key setup.  
+

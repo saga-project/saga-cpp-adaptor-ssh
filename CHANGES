@@ -1,0 +1,25 @@
+                            
+                            SAGA SSH Adaptors
+           <http://www.saga-project.org/download/adaptors/ssh/>
+                           - Release Changelog -
+
+  Changes with SAGA SSH Adaptors Version 1.0.0             01. September 2011
+  ---------------------------------------------------------------------------
+  
+  o Buildsystem preparation for Debian package generation.
+  o Fixed links in INSTALL/CHANGES files.
+  
+  
+  Changes with SAGA SSH/SCP Adaptors Version 0.9.0             19. April 2010
+  ---------------------------------------------------------------------------
+
+  o Initital release after repository split-up
+
+
+  Changes with SAGA SSH/SCP Adaptors Version 0.9.1            04. August 2010
+  ---------------------------------------------------------------------------
+
+  o removing the ssh_spread_keys feature for ssh_job
+  o add support for any:// for ssh_file
+
+
