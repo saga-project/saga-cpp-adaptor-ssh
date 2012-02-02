@@ -4,6 +4,8 @@
 //  Version 1.0. (See accompanying LICENSE file 
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+#include <sstream>
+
 #include <saga/saga/url.hpp>
 #include <saga/saga/exception.hpp>
 
@@ -24,7 +26,13 @@ namespace scp_file_adaptor
     adaptor_data_t       adata (this);
     file_instance_data_t idata (this);
 
-    SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
+    // s_ = p->get_session ();
+
+    init_ ();
+
+    ini_ = adap_ini.get_section ("preferences").get_entries ();
+    check_ini_ ();
+
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -67,5 +75,82 @@ namespace scp_file_adaptor
   {
     SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
   }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  void file_cpi_impl::check_ini_ (void)
+  {
+    // check if ini has required entries
+    if ( ini_.find ("scp_bin") == ini_.end () ||
+         ini_["scp_bin"]       == ""          )  
+    {
+      SAGA_ADAPTOR_THROW_NO_CONTEXT ("need path to scp in the SAGA ini",
+                                     saga::NoSuccess);
+    }
+
+
+    // set default opts (none)
+    if ( ini_.find ("scp_opt") == ini_.end () )
+    {
+      ini_["scp_opt"] = "";
+    }
+
+    scp_bin_   = ini_["scp_bin"];
+    scp_opt_   = saga::adaptors::utils::split (ini_["scp_opt"], ' ');
+
+    if ( ini_.find ("scp_test_remote") == ini_.end () )
+    {
+      ini_["scp_test_remote"] = "false";
+    }
+  }
+
+
+  void file_cpi_impl::init_ (void)
+  {
+    adaptor_data_t       adata (this);
+    file_instance_data_t idata (this);
+
+    if ( idata->location_.get_scheme () != "ssh"   &&
+         idata->location_.get_scheme () != "scp"   &&
+         idata->location_.get_scheme () != "sftp"  &&
+         idata->location_.get_scheme () != "local" &&
+         idata->location_.get_scheme () != "file"  &&
+         idata->location_.get_scheme () != "any"  )
+    {
+      SAGA_LOG_DEBUG ("scp can not handle url:");
+      SAGA_LOG_DEBUG (idata->location_.get_string ().c_str ());
+
+      std::stringstream ss;
+      ss << "Cannot handle URL scheme " << idata->location_.get_scheme ()
+        << " - can only handle ssh/scp/sftp/local/file/any'." << std::endl;
+      SAGA_ADAPTOR_THROW_NO_CONTEXT (ss.str ().c_str (), 
+                                     saga::adaptors::AdaptorDeclined);
+    }
+  }
+
+  std::string file_cpi_impl::url_to_cl_ (saga::url & u)
+  {
+    std::stringstream out;
+
+    if ( u.get_port () > 0 )
+    {
+      out << "-p " << u.get_port () << " ";
+    }
+
+    if ( ! u.get_username ().empty () )
+    {
+      out << u.get_username () << "@";
+    }
+
+    if ( ! u.get_host ().empty () )
+    {
+      out << u.get_host () << ":";
+    }
+
+    out << u.get_path ();
+
+    return out.str ();
+  }
+
 } // namespace
 

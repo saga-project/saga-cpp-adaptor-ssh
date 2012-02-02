@@ -57,7 +57,6 @@ namespace ssh_job
     // may throw.
     js_ = saga::job::service ("fork://localhost");
 
-
     ini_ = adap_ini.get_section ("preferences").get_entries ();
 
     check_ini_ ();
@@ -525,7 +524,7 @@ namespace ssh_job
 
     if ( ini_.find ("ssh_test_remote") == ini_.end () )
     {
-      ini_["ssh_test_remote"] = "true";
+      ini_["ssh_test_remote"] = "false";
     }
   }
 

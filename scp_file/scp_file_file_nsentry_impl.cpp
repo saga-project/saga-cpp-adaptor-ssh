@@ -15,16 +15,32 @@ namespace scp_file_adaptor
   //
   void file_cpi_impl::sync_get_url (saga::url & url)
   {
-    SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
+    init_ ();
+
+    file_instance_data_t idata (this);
+
+    url = idata->location_;
   }
 
   void file_cpi_impl::sync_get_cwd  (saga::url & cwd)
   {
-    SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
+    init_ ();
+
+    file_instance_data_t idata (this);
+
+    cwd = idata->location_;
+
+    // remove name element from path
+    cwd.set_path (cwd.get_path ());
   }
 
   void file_cpi_impl::sync_get_name (saga::url & name)
   {
+    init_ ();
+
+    file_instance_data_t idata (this);
+
+    // name = idata->location_.get_name ();
     SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
   }
 
@@ -51,7 +67,39 @@ namespace scp_file_adaptor
   void file_cpi_impl::sync_copy (saga::impl::void_t & ret, 
                                  saga::url dest, int flags)
   {
-    SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
+    file_instance_data_t idata (this);
+
+    // FIXME: what do we need from the context?
+    // FIXME: make sure that either src or target is local
+
+    // we have to transform src/tgt like this:
+    // scp://name@host:port/path/to/file -> -p port -l name host:/path/to/file
+    std::string src = url_to_cl_ (idata->location_);
+    std::string tgt = url_to_cl_ (dest);
+
+    
+
+
+    saga::adaptors::utils::process proc;
+
+    proc.set_cmd  (scp_bin_);
+    proc.set_args (scp_opt_);
+ // proc.add_arg  ("-q");       // suppress warnings
+    proc.add_arg  (src);
+    proc.add_arg  (tgt);
+
+    std::cout << " >> " << proc.dump () << std::endl;
+
+    (void) proc.run_sync ();
+
+    if ( ! proc.done () )
+    {
+      // SAGA_ADAPTOR_THROW ("Could not run a test ssh command", saga::NoSuccess);
+      std::stringstream ss;
+      ss << "scp (copy) failed: (" << proc.get_err_s () << ")";
+      SAGA_ADAPTOR_THROW (ss.str (), saga::NoSuccess);
+    }
+
   }
 
   void file_cpi_impl::sync_link (saga::impl::void_t & ret,    

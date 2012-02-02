@@ -1,0 +1,9 @@
+
+[saga.adaptors.scp_file]
+  name            = scp_file
+
+[saga.adaptors.scp_file.preferences]
+
+  scp_bin         = @SAGA_SCP@
+  scp_opt         = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0
+

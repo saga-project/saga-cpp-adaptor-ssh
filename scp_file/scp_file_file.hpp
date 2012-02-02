@@ -19,19 +19,45 @@ namespace scp_file_adaptor
   class file_cpi_impl : public saga::adaptors::v1_0::file_cpi<file_cpi_impl>
   {
     private:
-
       typedef saga::adaptors::v1_0::file_cpi<file_cpi_impl> file_cpi;
 
 
       /* instance data */
       typedef saga::adaptors::v1_0::file_cpi_instance_data instance_data_type;
-
-      friend class saga::adaptors::instance_data<instance_data_type>;
-      typedef      saga::adaptors::instance_data<instance_data_type> file_instance_data_t;
+      friend class saga::adaptors::instance_data          <instance_data_type>;
+      typedef      saga::adaptors::instance_data          <instance_data_type> file_instance_data_t;
 
 
       /* adaptor data */
       typedef saga::adaptors::adaptor_data <file_adaptor> adaptor_data_t;
+
+      boost::shared_ptr <file_cpi_impl> shared_from_this (void)
+      {
+        return boost::shared_ptr <file_cpi_impl> (this->base_type::shared_from_this (),
+                                                  boost::detail::static_cast_tag ());
+      }
+
+
+      // state
+      saga::session s_; // session
+
+
+      ///////////////////////////////////////////////////////////////////////////////
+      //
+      // init_() is called whenever the cpi's instance data have changed.  
+      // init_() will generally throw if the idata->location cannot be served.
+      // init_() is however assumed to be atomic, so it either succeeds, or it fails
+      // but then leaves the object state unchanged.  That way, the individual
+      // methods don't need to attempt to recover from a failed init_().
+      //
+      void        init_      (void);
+      void        check_ini_ (void);
+      std::string url_to_cl_ (saga::url & u);
+
+      std::string                          scp_bin_;
+      std::vector <std::string>            scp_opt_;
+      std::map <std::string, std::string>  ini_;
+
 
 
     public:
@@ -109,7 +135,9 @@ namespace scp_file_adaptor
       void sync_get_owner         (std::string        & out);
       void sync_get_group         (std::string        & out);    
 
+
   }; // class file_cpi_impl
+
 } // namespace scp_file_adaptor
 
 #endif // ADAPTORS_SCP_FILE_ADAPTOR_FILE_HPP

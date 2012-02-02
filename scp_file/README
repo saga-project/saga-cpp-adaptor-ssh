@@ -3,7 +3,7 @@
 
 :ADAPTOR NAME:
 
-   Ssh Scp Scp_File Adaptor
+   Ssh Scp_File Adaptor
 
 
 :AUTHORS:
@@ -28,7 +28,8 @@
 
 :DESCRIPTION:
 
-  The adaptor provides means to manage and access remote files via ssh and scp.
+  The adaptor provides means to manage and access remote files 
+  via ssh, scp and sftp.
 
 
 :URL SCHEMES:
@@ -36,7 +37,9 @@
   supported URL schemes are:
 
     any://
+    ssh://
     scp://
+    sftp://
 
 
 :REQUIRES:
@@ -46,6 +49,7 @@
 
   - ssh
   - scp
+  - sftp
 
 
 
@@ -65,4 +69,5 @@
 
 :KNOWN ISSUES:
 
+  Adaptor implementation is incomplete.
  
