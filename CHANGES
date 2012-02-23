@@ -3,6 +3,12 @@
            <http://www.saga-project.org/download/adaptors/ssh/>
                            - Release Changelog -
 
+  Changes with SAGA SSH Adaptors Version 1.1.1                Thu Feb 23 2012
+  ---------------------------------------------------------------------------
+  
+  o hotfix for ssh context adaptor configuraration
+  
+  
   Changes with SAGA SSH Adaptors Version 1.0.0             01. September 2011
   ---------------------------------------------------------------------------
   
