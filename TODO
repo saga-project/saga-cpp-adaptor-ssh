@@ -1,0 +1,7 @@
+  - test -d
+  - mkdir
+  - rmdir
+  - rm
+  - Recursive directory copy and delete
+  - Third party transfers
+
