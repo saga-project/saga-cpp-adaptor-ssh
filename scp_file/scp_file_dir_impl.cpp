@@ -21,10 +21,8 @@ namespace scp_file_adaptor
 
       : directory_cpi (p, info, adaptor, cpi::Noflags)
   {
-    adaptor_data_t            adata (this);
-    directory_instance_data_t idata (this);
-
-    SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
+    adaptor_data_t      adata (this);
+    dir_instance_data_t idata (this);
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -65,5 +63,32 @@ namespace scp_file_adaptor
   {
     SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
   }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //
+  std::string dir_cpi_impl::url_to_cl_ (saga::url & u)
+  {
+    std::stringstream out;
+
+    if ( u.get_port () > 0 )
+    {
+      out << "-p " << u.get_port () << " ";
+    }
+
+    if ( ! u.get_username ().empty () )
+    {
+      out << u.get_username () << "@";
+    }
+
+    if ( ! u.get_host ().empty () )
+    {
+      out << u.get_host () << ":";
+    }
+
+    out << u.get_path ();
+
+    return out.str ();
+  }
+
 } // namespace
 

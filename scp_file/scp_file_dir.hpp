@@ -37,7 +37,7 @@ namespace scp_file_adaptor
       typedef saga::adaptors::v1_0::directory_cpi_instance_data instance_data_type;
 
       friend class saga::adaptors::instance_data <instance_data_type>;
-      typedef      saga::adaptors::instance_data <instance_data_type> directory_instance_data_t;
+      typedef      saga::adaptors::instance_data <instance_data_type> dir_instance_data_t;
 
 
       /* adaptor data */
@@ -52,6 +52,7 @@ namespace scp_file_adaptor
 
       void sync_init (void);
 
+      std::string url_to_cl_ (saga::url & u);
 
     public:
 

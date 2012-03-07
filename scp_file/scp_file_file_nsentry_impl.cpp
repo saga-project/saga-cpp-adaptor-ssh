@@ -77,8 +77,6 @@ namespace scp_file_adaptor
     std::string src = url_to_cl_ (idata->location_);
     std::string tgt = url_to_cl_ (dest);
 
-    
-
 
     saga::adaptors::utils::process proc;
 

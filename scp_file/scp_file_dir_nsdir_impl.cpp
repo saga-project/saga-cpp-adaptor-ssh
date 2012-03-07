@@ -173,10 +173,50 @@ namespace scp_file_adaptor
   ///////////////////////////////////////////////////////////////////////////////
   //
   void dir_cpi_impl::sync_make_dir (saga::impl::void_t & ret, 
-                                    saga::url            url, 
+                                    saga::url            dest, 
                                     int                  flags)
   {
-    SAGA_ADAPTOR_THROW ("Not Implemented", saga::NotImplemented);
+    dir_instance_data_t idata (this);
+
+    std::cout << " ========= " << dest << std::endl;
+
+    // FIXME: what do we need from the context?
+    // FIXME: make sure that either src or target is local
+
+    // we have to transform src/tgt like this:
+    // scp://name@host:port/path/to/file -> -p port -l name host:/path/to/file
+    std::string tgt = url_to_cl_ (dest);
+
+    saga::adaptors::utils::process proc;
+
+    proc.set_cmd  ("echo"); 
+
+    std::vector <std::string> args;
+
+    args.push_back ("/tmp/test");
+    args.push_back ("|");
+    args.push_back ("xargs");
+    args.push_back ("mkdir");
+
+    proc.set_args (args);
+
+    // proc.set_args (sftp_bin_);
+    // proc.set_args (sftp_opt_);
+ // // proc.add_arg  ("-q");       // suppress warnings
+    // proc.add_arg  (tgt);
+
+    std::cout << " >> " << proc.dump () << std::endl;
+
+    (void) proc.run_sync ();
+
+    if ( ! proc.done () )
+    {
+      // SAGA_ADAPTOR_THROW ("Could not run a test ssh command", saga::NoSuccess);
+      std::stringstream ss;
+      ss << "scp (copy) failed: (" << proc.get_err_s () << ")";
+      SAGA_ADAPTOR_THROW (ss.str (), saga::NoSuccess);
+    }
+
   }
 } // namespace
 
