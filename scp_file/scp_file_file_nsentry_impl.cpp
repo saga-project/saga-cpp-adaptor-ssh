@@ -86,7 +86,7 @@ namespace scp_file_adaptor
     proc.add_arg  (src);
     proc.add_arg  (tgt);
 
-    std::cout << " >> " << proc.dump () << std::endl;
+    // std::cout << " >> " << proc.dump () << std::endl;
 
     (void) proc.run_sync ();
 

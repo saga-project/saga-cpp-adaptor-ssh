@@ -189,23 +189,15 @@ namespace scp_file_adaptor
 
     saga::adaptors::utils::process proc;
 
-    proc.set_cmd  ("echo"); 
+    proc.set_cmd  (ssh_bin_);
+    proc.set_args (ssh_opt_);
+ // proc.add_arg  ("-q");       // suppress warnings
+    proc.add_arg  ("mkdir");
+    proc.add_arg  (tgt);
 
-    std::vector <std::string> args;
+    // std::cout << " >> " << proc.dump () << std::endl;
 
-    args.push_back ("/tmp/test");
-    args.push_back ("|");
-    args.push_back ("xargs");
-    args.push_back ("mkdir");
-
-    proc.set_args (args);
-
-    // proc.set_args (sftp_bin_);
-    // proc.set_args (sftp_opt_);
- // // proc.add_arg  ("-q");       // suppress warnings
-    // proc.add_arg  (tgt);
-
-    std::cout << " >> " << proc.dump () << std::endl;
+    SAGA_ADAPTOR_THROW ("doh", saga::NoSuccess);
 
     (void) proc.run_sync ();
 

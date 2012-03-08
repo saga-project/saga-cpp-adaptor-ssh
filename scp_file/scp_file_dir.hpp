@@ -50,9 +50,33 @@ namespace scp_file_adaptor
                                                  boost::detail::static_cast_tag ());
       }
 
-      void sync_init (void);
 
+      // state
+      saga::session s_; // session
+
+
+      ///////////////////////////////////////////////////////////////////////////////
+      //
+      // init_() is called whenever the cpi's instance data have changed.  
+      // init_() will generally throw if the idata->location cannot be served.
+      // init_() is however assumed to be atomic, so it either succeeds, or it fails
+      // but then leaves the object state unchanged.  That way, the individual
+      // methods don't need to attempt to recover from a failed init_().
+      //
+      void        init_      (void);
+      void        check_ini_ (void);
       std::string url_to_cl_ (saga::url & u);
+
+      std::string                          sftp_bin_;
+      std::vector <std::string>            sftp_opt_;
+      std::string                          ssh_bin_;
+      std::vector <std::string>            ssh_opt_;
+      std::string                          scp_bin_;
+      std::vector <std::string>            scp_opt_;
+
+      std::map <std::string, std::string>  ini_;
+
+
 
     public:
 

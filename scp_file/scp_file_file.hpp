@@ -54,8 +54,13 @@ namespace scp_file_adaptor
       void        check_ini_ (void);
       std::string url_to_cl_ (saga::url & u);
 
+      std::string                          sftp_bin_;
+      std::vector <std::string>            sftp_opt_;
+      std::string                          ssh_bin_;
+      std::vector <std::string>            ssh_opt_;
       std::string                          scp_bin_;
       std::vector <std::string>            scp_opt_;
+
       std::map <std::string, std::string>  ini_;
 
 
