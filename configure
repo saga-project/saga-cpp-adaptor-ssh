@@ -572,8 +572,7 @@ SAGA_DEB_ARCH
 SAGA_DEB_DEPENDENCIES
 SAGA_DPKG
 BUILD_ADAPTOR_JOB
-BUILD_ADAPTOR_FILESYSTEM_SSHFS
-BUILD_ADAPTOR_FILESYSTEM_SCP
+BUILD_ADAPTOR_FILESYSTEM
 BUILD_ADAPTOR_CONTEXT
 CPP_HAVE_SSHFS
 CPP_HAVE_SCP
@@ -586,17 +585,14 @@ HAVE_SSH
 SAGA_SSH
 HAVE_GSISSH
 SAGA_GSISSH
-SAGA_DAT_ROOT
-SAGA_MAN_ROOT
-SAGA_INC_ROOT
-SAGA_LIB_ROOT
-SAGA_BIN_ROOT
-SAGA_MODULE_PREFIX
 CONFDIR
 TMP_SAGA_INSTTYPE
 SAGA_LIB_VERSION
 SAGA_MAKE_INCLUDE_DIR
 TMP_SAGA_LOCATION
+SAGA_PACKAGE_REVISION
+SAGA_PACKAGE_VERSION
+SAGA_PACKAGE_NAME
 SAGA_CONFIG
 SAGA_INI_DIR
 SAGA_BIN_DIR
@@ -605,8 +601,6 @@ SAGA_INC_DIR
 SAGA_CONF_DIR
 SAGA_MAKE_DIR
 HAVE_SAGA
-SAGA_PACKAGE_REVISION
-SAGA_PACKAGE_VERSION
 SAGA_VERSION_SUBMINOR
 SAGA_VERSION_MINOR
 SAGA_VERSION_MAJOR
@@ -1713,9 +1707,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-########################################################################
-
-
 
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -1819,8 +1810,16 @@ $as_echo "$SAGA_VERSION_MAJOR.$SAGA_VERSION_MINOR.$SAGA_VERSION_SUBMINOR" >&6; }
   fi
 
 
-  # We set SAGA_PACKAGE_VERSION to SAGA_VERSION by default.  If a local PACKAGE file is
-  # present though, for example for an adaptor, we use its version info instead.
+  # We set SAGA_PACKAGE_NAME, SAGA_PACKAGE_VERSION to SAGA_VERSION by default.  If a
+  # local PACKAGE file is present though, for example for an adaptor, we use its
+  # version info instead.
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking saga package name" >&5
+$as_echo_n "checking saga package name... " >&6; }
+  SAGA_PACKAGE_NAME=saga
+  test -f PACKAGE && SAGA_PACKAGE_NAME=` grep -e '^PACKAGE:'  PACKAGE | sed -e 's/^PACKAGE: *//'`
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SAGA_PACKAGE_NAME" >&5
+$as_echo "$SAGA_PACKAGE_NAME" >&6; }
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking saga package version" >&5
 $as_echo_n "checking saga package version... " >&6; }
@@ -1836,12 +1835,6 @@ $as_echo "$SAGA_PACKAGE_VERSION (r$SAGA_PACKAGE_REVISION)" >&6; }
   if ! test "$svnrevision" = ""; then
     SAGA_PACKAGE_REVISION=$svnrevision
   fi
-
-
-  export  SAGA_PACKAGE_VERSION
-
-  export  SAGA_PACKAGE_REVISION
-
 
 
   # we set SAGA_LOCATION, and a couple of other vars
@@ -1866,6 +1859,9 @@ $as_echo "$SAGA_PACKAGE_VERSION (r$SAGA_PACKAGE_REVISION)" >&6; }
   export SAGA_INI_DIR
   export SAGA_CONFIG
   export SAGA_VERSION
+  export SAGA_PACKAGE_NAME
+  export SAGA_PACKAGE_VERSION
+  export SAGA_PACKAGE_REVISION
 
 
 
@@ -1878,11 +1874,9 @@ $as_echo "$SAGA_PACKAGE_VERSION (r$SAGA_PACKAGE_REVISION)" >&6; }
 
 
 
-  cat >>confdefs.h <<_ACEOF
-#define SAGA_LOCATION "$SAGA_LOCATION"
-_ACEOF
 
-  export SAGA_LOCATION
+
+
 
   # the adaptor and binding config files depend on the earlier findings of
   # SAGA's main configure.
@@ -1915,68 +1909,6 @@ _ACEOF
   # set a full path to that, so that make files can find the respective includes
   CONFDIR=`pwd`/config/
   export CONFDIR
-
-
-
-  prefix="$prefix"
-
-
-  if test "$prefix" = "" -o "$prefix" = "NONE"; then
-    prefix=$SAGA_LOCATION
-    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No prefix specified -- defaulting to \$SAGA_LOCATION ($SAGA_LOCACTION)" >&5
-$as_echo "$as_me: WARNING: No prefix specified -- defaulting to \$SAGA_LOCATION ($SAGA_LOCACTION)" >&2;}
-    fi
-
-
-  SAGA_MODULE_PREFIX=$prefix
-
-  export SAGA_MODULE_PREFIX
-
-  if test "$libdir" = '${exec_prefix}/lib'; then
-   SAGA_LIB_ROOT=$SAGA_MODULE_PREFIX/lib
-  else
-   SAGA_LIB_ROOT=$libdir
-  fi
-
-  if test "$bindir" = '${exec_prefix}/bin'; then
-   SAGA_BIN_ROOT="$SAGA_MODULE_PREFIX/bin"
-  else
-   SAGA_BIN_ROOT="$bindir"
-  fi
-
-  if test "$includedir" = '${prefix}/include'; then
-   SAGA_INC_ROOT="$SAGA_MODULE_PREFIX/include"
-  else
-   SAGA_INC_ROOT="$includedir"
-  fi
-
-  if test "$mandir" = '${datarootdir}/man'; then
-   SAGA_MAN_ROOT="$SAGA_MODULE_PREFIX/share/man"
-  else
-   SAGA_MAN_ROOT="$mandir"
-  fi
-
-  if test "$datadir" = '${datarootdir}'; then
-   if test "$datarootdir" = '${prefix}/share'; then
-    SAGA_DAT_ROOT="$SAGA_MODULE_PREFIX/share"
-   else
-    SAGA_DAT_ROOT="$datarootdir"
-   fi
-  else
-   SAGA_DAT_ROOT="$datadir"
-  fi
-
-  is_saga_dir=`echo $SAGA_DAT_ROOT | sed -e 's/\/$//g' | rev | cut -f 1 | rev`
-  if ! test "$is_saga_dir" = "saga"; then
-    SAGA_DAT_ROOT="$SAGA_DAT_ROOT/saga"
-  fi
-
-
-
-
-
-
-  ########################################################################
 
 
 SAGA_DEP_FILES="$SAGA_LOCATION/include/saga/saga.hpp"
@@ -2285,9 +2217,7 @@ ac_config_files="$ac_config_files config/saga.config.ssh.c.mk"
 
 ac_config_files="$ac_config_files ssh_context/ssh_context_adaptor.ini"
 
-ac_config_files="$ac_config_files sshfs_file/sshfs_file_adaptor.ini"
-
-ac_config_files="$ac_config_files scp_file/scp_file_adaptor.ini"
+ac_config_files="$ac_config_files ssh_file/ssh_file_adaptor.ini"
 
 ac_config_files="$ac_config_files ssh_job/ssh_job_adaptor.ini"
 
@@ -2306,12 +2236,13 @@ if test "$HAVE_SSHFS" = "yes"; then CPP_HAVE_SSHFS=1; fi
 
 
 BUILD_ADAPTOR_CONTEXT=no
-BUILD_ADAPTOR_FILESYSTEM_SCP=no
-BUILD_ADAPTOR_FILESYSTEM_SSHFS=no
+BUILD_ADAPTOR_FILESYSTEM=no
 BUILD_ADAPTOR_JOB=no
 
 if test "x$HAVE_SSH" = "xyes"; then
-  BUILD_ADAPTOR_CONTEXT="yes"
+  if test "x$SAGA_HAVE_PACKAGE_CONTEXT" = "xyes"; then
+    BUILD_ADAPTOR_CONTEXT="yes"
+  fi
 fi
 
 if test "x$HAVE_GSISSH" = "xyes"; then
@@ -2326,17 +2257,9 @@ if test "x$HAVE_SSH" = "xyes"; then
   fi
 fi
 
-if test "$HAVE_SCP" = "yes"; then
+if test "$HAVE_SSHFS-$HAVE_SCP" = "yes-yes"; then
   if test "x$SAGA_HAVE_PACKAGE_FILESYSTEM" = "xyes"; then
-    BUILD_ADAPTOR_FILESYSTEM_SCP="yes"
-    BUILD_ADAPTOR_CONTEXT="yes"
-  fi
-fi
-
-
-if test "$HAVE_SSHFS" = "yes"; then
-  if test "x$SAGA_HAVE_PACKAGE_FILESYSTEM" = "xyes"; then
-    BUILD_ADAPTOR_FILESYSTEM_SSHFS="yes"
+    BUILD_ADAPTOR_FILESYSTEM="yes"
     BUILD_ADAPTOR_CONTEXT="yes"
   fi
 fi
@@ -2361,7 +2284,6 @@ if test "x$HAVE_SSHFS" = "xyes"; then
   SAGA_SSHFS_S="($SAGA_SSHFS)"
   SAGA_DEP_FILES_NOVERSION="$SAGA_DEP_FILES $SAGA_SSHFS"
 fi
-
 
 
 
@@ -2574,7 +2496,7 @@ Maintainer:     Andre Merzky [andre--saga@merzky.net]
 Conflicts:
 Replaces:
 Provides:
-Description:    http://www.saga-project.org/
+Description:    http://saga-project.org/
 EOT
     #
     ###########################################################
@@ -2859,14 +2781,14 @@ $as_echo "creating $SAGA_RPM_CONTROL" >&6; }
 # Header section
 #
 
-Summary:   http://www.saga-project.org/
+Summary:   http://saga-project.org/
 Name:      $SAGA_RPM_PACKAGE
 Version:   $SAGA_RPM_VERSION
 Release:   $SAGA_RPM_RELEASE
 License:   '$SAGA_RPM_LICENSE'
 Group:     Applications/Devel
 Source:    $SAGA_RPM_FULLNAME.tgz
-URL:       http://www.saga-project.org/release/
+URL:       http://saga-project.org/release/
 
 # temporary dir where the software should be compiled
 Buildroot: %{_tmppath}/%{name}-root
@@ -2876,7 +2798,7 @@ Autoreq:   1
 $all_deps
 
 %description
-http://www.saga-project.org/
+http://saga-project.org/
 
 
 ########################################################################
@@ -3695,8 +3617,7 @@ do
   case $ac_config_target in
     "config/saga.config.ssh.c.mk") CONFIG_FILES="$CONFIG_FILES config/saga.config.ssh.c.mk" ;;
     "ssh_context/ssh_context_adaptor.ini") CONFIG_FILES="$CONFIG_FILES ssh_context/ssh_context_adaptor.ini" ;;
-    "sshfs_file/sshfs_file_adaptor.ini") CONFIG_FILES="$CONFIG_FILES sshfs_file/sshfs_file_adaptor.ini" ;;
-    "scp_file/scp_file_adaptor.ini") CONFIG_FILES="$CONFIG_FILES scp_file/scp_file_adaptor.ini" ;;
+    "ssh_file/ssh_file_adaptor.ini") CONFIG_FILES="$CONFIG_FILES ssh_file/ssh_file_adaptor.ini" ;;
     "ssh_job/ssh_job_adaptor.ini") CONFIG_FILES="$CONFIG_FILES ssh_job/ssh_job_adaptor.ini" ;;
     "config/make.cfg") CONFIG_FILES="$CONFIG_FILES config/make.cfg" ;;
     "config/config.hpp") CONFIG_FILES="$CONFIG_FILES config/config.hpp" ;;
@@ -4161,7 +4082,6 @@ echo "       SAGA version    : $SAGA_VERSION                           " >> $OUT
 echo "                                                                 " >> $OUT
 echo " Adaptor Version       : $SAGA_PACKAGE_VERSION                   " >> $OUT
 echo " Adaptor Revision      : $SAGA_PACKAGE_REVISION                  " >> $OUT
-echo " Adaptor Prefix        : $SAGA_MODULE_PREFIX                     " >> $OUT
 echo "                                                                 " >> $OUT
 echo " GSISSH found          : $HAVE_GSISSH 	$SAGA_GSISSH_S           " >> $OUT
 echo " SSH    found          : $HAVE_SSH 	$SAGA_SSH_S                  " >> $OUT
@@ -4170,9 +4090,8 @@ echo " SSHFS  found          : $HAVE_SSHFS 	$SAGA_SSHFS_S              " >> $OUT
 echo "                                                                 " >> $OUT
 echo "                                                                 " >> $OUT
 echo " Context Adaptor       : $BUILD_ADAPTOR_CONTEXT                  " >> $OUT
+echo " File    Adaptor       : $BUILD_ADAPTOR_FILESYSTEM               " >> $OUT
 echo " Job     Adaptor       : $BUILD_ADAPTOR_JOB                      " >> $OUT
-echo " File    Adaptor scp   : $BUILD_ADAPTOR_FILESYSTEM_SCP           " >> $OUT
-echo " File    Adaptor sshfs : $BUILD_ADAPTOR_FILESYSTEM_SSHFS         " >> $OUT
 echo "                                                                 " >> $OUT
 echo " --------------------------------------------------------        " >> $OUT
 echo "                                                                 " >> $OUT

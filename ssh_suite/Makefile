@@ -13,6 +13,7 @@ SAGA_SRC                      = $(wildcard *.cpp)
 SAGA_OBJ                      = $(SAGA_SRC:%.cpp=%.o)
 
 SAGA_ADAPTOR_UTIL_NAME        = ssh
+SAGA_ADAPTOR_UTIL_LITE_ENABLE = TRUE
 SAGA_ADAPTOR_UTIL_OBJ         = $(SAGA_OBJ)
 
 SAGA_ADAPTOR_UTIL_OPTIONS     = ssh

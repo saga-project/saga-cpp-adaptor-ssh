@@ -1,0 +1,60 @@
+
+::SAGA DOCUMENTATION FILE::
+
+:AUTHORS:
+
+  Copyright (c) 2009 Andre Merzky <andre@merzky.net>
+
+
+:LICENSE:
+
+  Distributed under the Boost Software License, Version 1.0.
+
+
+:DESCRIPTION:
+
+ The SSH file adaptor allows remote file access to ssh backends.  That is
+ implemented by mounting the remote file system via sshfs, and then forwarding
+ all file operations to the local file adaptor (URLs are just translated into
+ that mounted namespace transparently).  Thus, the ssh file adaptor depends
+ crucially on the local file adaptor.
+
+
+:CHANGELOG:
+
+  - initial version
+
+
+:REQUIRES:
+
+  All ssh adaptors require the ssh and scp command line tools.  If those are not
+  found in the path, configure can be told about alternative locations.  The ssh
+  file adaptor additionally requires fuse/sshfs to be installed, and the FUSE
+  module to be loaded into the kernel.  See INFO file for the ssh proxy adaptor
+  for some more details.
+
+
+:CONFIGURE OPTIONS:
+
+  | --with-ssh              path to ssh   binary [default=check] |\\
+  | --with-scp              path to scp   binary [default=check] |\\
+  | --with-sshfs            path to sshfs binary [default=check] |\\
+  
+
+:INI OPTIONS:
+
+  At the moment, SAGA does not allow to (easily) share ini options between
+  adaptors.  Thus, all ssh ini options are actually replicated between all ini
+  adaptors - this will be fixed at some point.  Up to then, however, the ini
+  documentation of the ssh context adaptor will cover the ini settings for *all*
+  ssh adaptors.
+
+  Additionally, the file adaptor supports two additional ini keys:
+
+  |sshfs_mnt       = ${HOME}/.saga/adaptors/ssh/ssh_file/mnt/|
+  |sshfs_keepalive = yes|
+
+  |sshfs_mnt| sets the mount root for the sshfs fuse mount operations, and
+  |sshfs_keepalive| determines if the mounted sshfs filesystems should stay
+  mounted after adaptor destructions.
+  

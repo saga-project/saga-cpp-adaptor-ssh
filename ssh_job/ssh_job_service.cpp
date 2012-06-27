@@ -149,19 +149,41 @@ namespace ssh_job
       }
 
 
-      if ( 0 == ssh_contexts.size () )
+      for ( unsigned int j = 0; j < ssh_contexts.size (); j++ )
       {
-        loc_ssh_key_priv_  = "";
-        loc_ssh_key_pub_   = "";
+        // try that context
+        ctx_ = ssh_contexts[j];
+
+        // FIXME: check if attribs exist
+        if ( !     ctx_.attribute_exists ("UserKey")  ||
+             "" == ctx_.get_attribute    ("UserKey")  ||
+             !     ctx_.attribute_exists ("UserCert") ||
+             "" == ctx_.get_attribute    ("UserCert") )
+        {
+          // _need_ private and public key to be useful
+          SAGA_LOG_DEBUG ("context  incomplete");
+          break;
+        }
+
+        loc_ssh_key_priv_  = ctx_.get_attribute ("UserKey");
+        loc_ssh_key_pub_   = ctx_.get_attribute ("UserCert");
 
         struct passwd * p = ::getpwuid (::getuid ());
         if ( p == NULL )
         {
           local_user_ = "root";
         }
-
         local_user_ = p->pw_name;
-        user_ = local_user_;
+        
+
+        if ( ctx_.attribute_exists ("UserKey") )
+        {
+          user_ = ctx_.get_attribute ("UserID");
+        } 
+        else
+        {
+          user_ = local_user_;
+        }
 
 
         // the URL may actually have a userid fixed
@@ -169,6 +191,26 @@ namespace ssh_job
         {
           user_ = rm_.get_userinfo ();
         }
+
+
+        // determine additional vars used for the environement of started jobs
+        // FIXME: the saga jobid leads to invalid command lines and file names
+        // try
+        // {
+        //   saga::job::job self = js_.get_self ();
+        //   parent_id_ = self.get_job_id ();
+        // }
+        // catch ( ... )
+        {
+          // did not get jobid - invent one
+          std::stringstream ss;
+          ss << "[saga_parent_id:" << ::getpid () << "]";
+          parent_id_ = ss.str ();
+        }
+
+        rem_ssh_key_pub_  = std::string ("/tmp/saga_") + parent_id_ + "_ssh.pub";
+        rem_ssh_key_priv_ = std::string ("/tmp/saga_") + parent_id_ + "_ssh";
+
 
         // prepare the remote host
         if ( ini_["ssh_test_remote"] == "yes"  ||
@@ -183,12 +225,10 @@ namespace ssh_job
 
             proc.set_cmd  (ssh_bin_);
             proc.set_args (ssh_opt_);
-            
-            // suppress warnings
-            proc.add_arg  ("-q");
 
             // FIXME: ensure that context is complete
-            proc.add_arg  (user_ + "@" + host_);
+            proc.add_args ("-i", loc_ssh_key_priv_);
+            proc.add_arg  (      user_ + "@" + host_);
             proc.add_arg  ("true");
 
             (void) proc.run_sync ();
@@ -209,124 +249,6 @@ namespace ssh_job
         // we are done - no exception 'til now!
         return;
       }
-      else
-      {
-        for ( unsigned int j = 0; j < ssh_contexts.size (); j++ )
-        {
-          try
-          {
-            // try that context
-            ctx_ = ssh_contexts[j];
-
-            // FIXME: check if attribs exist
-            if ( !     ctx_.attribute_exists ("UserKey")  ||
-                 "" == ctx_.get_attribute    ("UserKey")  ||
-                 !     ctx_.attribute_exists ("UserCert") ||
-                 "" == ctx_.get_attribute    ("UserCert") )
-            {
-              // _need_ private and public key to be useful
-              SAGA_LOG_DEBUG ("context  incomplete");
-              break;
-            }
-
-            loc_ssh_key_priv_  = ctx_.get_attribute ("UserKey");
-            loc_ssh_key_pub_   = ctx_.get_attribute ("UserCert");
-
-            struct passwd * p = ::getpwuid (::getuid ());
-            if ( p == NULL )
-            {
-              local_user_ = "root";
-            }
-            local_user_ = p->pw_name;
-            
-
-            if ( ctx_.attribute_exists ("UserKey") )
-            {
-              user_ = ctx_.get_attribute ("UserID");
-            } 
-            else
-            {
-              user_ = local_user_;
-            }
-
-
-            // the URL may actually have a userid fixed
-            if ( "" != rm_.get_userinfo () )
-            {
-              user_ = rm_.get_userinfo ();
-            }
-
-
-            // determine additional vars used for the environement of started jobs
-            // FIXME: the saga jobid leads to invalid command lines and file names
-            // try
-            // {
-            //   saga::job::job self = js_.get_self ();
-            //   parent_id_ = self.get_job_id ();
-            // }
-            // catch ( ... )
-            {
-              // did not get jobid - invent one
-              std::stringstream ss;
-              ss << "[saga_parent_id:" << ::getpid () << "]";
-              parent_id_ = ss.str ();
-            }
-
-            rem_ssh_key_pub_  = std::string ("/tmp/saga_") + parent_id_ + "_ssh.pub";
-            rem_ssh_key_priv_ = std::string ("/tmp/saga_") + parent_id_ + "_ssh";
-
-
-            // prepare the remote host
-            if ( ini_["ssh_test_remote"] == "yes"  ||
-                 ini_["ssh_test_remote"] == "true" )
-            {
-              // we don't test if host is not known
-              if ( ! host_.empty () )
-              {
-                SAGA_LOG_DEBUG (" running ssh test");
-
-                saga::adaptors::utils::process proc;
-
-                proc.set_cmd  (ssh_bin_);
-                proc.set_args (ssh_opt_);
-                
-                // suppress warnings
-                proc.add_arg  ("-q");
-
-                // FIXME: ensure that context is complete
-                if ( ! loc_ssh_key_priv_.empty () )
-                  proc.add_args ("-i", loc_ssh_key_priv_);
-
-                proc.add_arg  (user_ + "@" + host_);
-                proc.add_arg  ("true");
-
-                (void) proc.run_sync ();
-
-                if ( ! proc.done () )
-                {
-                  // SAGA_ADAPTOR_THROW ("Could not run a test ssh command", saga::NoSuccess);
-                  std::stringstream ss;
-                  ss << "Cannot execute jobs on remote host (" << proc.get_err_s () << ")";
-                  SAGA_ADAPTOR_THROW (ss.str (), saga::NoSuccess);
-                }
-              }
-            }
-
-            // we keep this context as valid for the host.
-            // s_.add_context (ctx_);
-
-            // we are done - no exception 'til now!
-            return;
-          }
-          catch ( ... )
-          {
-            // this context did not work, try the next one...
-          }
-        }
-      } // have some ssh contexts
-
-      // we are done - no exception 'til now!
-      return;
 
     } 
     else // ! use_gsi_

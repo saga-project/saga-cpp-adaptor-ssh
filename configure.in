@@ -10,12 +10,7 @@ m4_include([config/saga_ssh.m4])
 
 AC_INIT()
 
-########################################################################
-
-
 AX_SAGA_CONFIG()
-AX_SAGA_PREFIX($prefix)
-
 SAGA_DEP_FILES="$SAGA_LOCATION/include/saga/saga.hpp"
 
 AX_SAGA_CHECK_GSISSH()
@@ -28,8 +23,7 @@ fi
 
 AC_CONFIG_FILES([config/saga.config.ssh.c.mk])
 AC_CONFIG_FILES([ssh_context/ssh_context_adaptor.ini])
-AC_CONFIG_FILES([sshfs_file/sshfs_file_adaptor.ini])
-AC_CONFIG_FILES([scp_file/scp_file_adaptor.ini])
+AC_CONFIG_FILES([ssh_file/ssh_file_adaptor.ini])
 AC_CONFIG_FILES([ssh_job/ssh_job_adaptor.ini])
 
 # translate defines into integers
@@ -46,12 +40,13 @@ AC_SUBST(CPP_HAVE_SCP)
 AC_SUBST(CPP_HAVE_SSHFS)
 
 BUILD_ADAPTOR_CONTEXT=no
-BUILD_ADAPTOR_FILESYSTEM_SCP=no
-BUILD_ADAPTOR_FILESYSTEM_SSHFS=no
+BUILD_ADAPTOR_FILESYSTEM=no
 BUILD_ADAPTOR_JOB=no
 
 if test "x$HAVE_SSH" = "xyes"; then
-  BUILD_ADAPTOR_CONTEXT="yes"
+  if test "x$SAGA_HAVE_PACKAGE_CONTEXT" = "xyes"; then
+    BUILD_ADAPTOR_CONTEXT="yes"
+  fi
 fi
 
 if test "x$HAVE_GSISSH" = "xyes"; then
@@ -66,17 +61,9 @@ if test "x$HAVE_SSH" = "xyes"; then
   fi
 fi
 
-if test "$HAVE_SCP" = "yes"; then
+if test "$HAVE_SSHFS-$HAVE_SCP" = "yes-yes"; then
   if test "x$SAGA_HAVE_PACKAGE_FILESYSTEM" = "xyes"; then
-    BUILD_ADAPTOR_FILESYSTEM_SCP="yes"
-    BUILD_ADAPTOR_CONTEXT="yes"
-  fi
-fi
-
-
-if test "$HAVE_SSHFS" = "yes"; then
-  if test "x$SAGA_HAVE_PACKAGE_FILESYSTEM" = "xyes"; then
-    BUILD_ADAPTOR_FILESYSTEM_SSHFS="yes"
+    BUILD_ADAPTOR_FILESYSTEM="yes"
     BUILD_ADAPTOR_CONTEXT="yes"
   fi
 fi
@@ -103,8 +90,7 @@ if test "x$HAVE_SSHFS" = "xyes"; then
 fi
 
 AC_SUBST([BUILD_ADAPTOR_CONTEXT])
-AC_SUBST([BUILD_ADAPTOR_FILESYSTEM_SCP])
-AC_SUBST([BUILD_ADAPTOR_FILESYSTEM_SSHFS])
+AC_SUBST([BUILD_ADAPTOR_FILESYSTEM])
 AC_SUBST([BUILD_ADAPTOR_JOB])
 
 ###########################################################
@@ -142,7 +128,6 @@ echo "       SAGA version    : $SAGA_VERSION                           " >> $OUT
 echo "                                                                 " >> $OUT
 echo " Adaptor Version       : $SAGA_PACKAGE_VERSION                   " >> $OUT
 echo " Adaptor Revision      : $SAGA_PACKAGE_REVISION                  " >> $OUT
-echo " Adaptor Prefix        : $SAGA_MODULE_PREFIX                     " >> $OUT
 echo "                                                                 " >> $OUT
 echo " GSISSH found          : $HAVE_GSISSH 	$SAGA_GSISSH_S           " >> $OUT
 echo " SSH    found          : $HAVE_SSH 	$SAGA_SSH_S                  " >> $OUT
@@ -151,9 +136,8 @@ echo " SSHFS  found          : $HAVE_SSHFS 	$SAGA_SSHFS_S              " >> $OUT
 echo "                                                                 " >> $OUT
 echo "                                                                 " >> $OUT
 echo " Context Adaptor       : $BUILD_ADAPTOR_CONTEXT                  " >> $OUT
+echo " File    Adaptor       : $BUILD_ADAPTOR_FILESYSTEM               " >> $OUT
 echo " Job     Adaptor       : $BUILD_ADAPTOR_JOB                      " >> $OUT
-echo " File    Adaptor scp   : $BUILD_ADAPTOR_FILESYSTEM_SCP           " >> $OUT
-echo " File    Adaptor sshfs : $BUILD_ADAPTOR_FILESYSTEM_SSHFS         " >> $OUT
 echo "                                                                 " >> $OUT
 echo " --------------------------------------------------------        " >> $OUT
 echo "                                                                 " >> $OUT

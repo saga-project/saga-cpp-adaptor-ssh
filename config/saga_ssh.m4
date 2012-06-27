@@ -137,41 +137,6 @@ AC_DEFUN([AX_SAGA_CHECK_SCP],
 ])
 
 
-AC_DEFUN([AX_SAGA_CHECK_SCP],
-[
-  AC_ARG_WITH([scp],
-              [AS_HELP_STRING([--with-scp],
-              [path to scp binary @<:@default=check@:>@])],
-              [],
-              [with_scp=check])
-
-  if test "x$with_scp" = "xcheck"; then
-  
-    AC_PATH_PROG(SAGA_SCP, scp)
-
-    HAVE_SCP=no
-
-    if ! test "x$SAGA_SCP" = "x"; then
-      HAVE_SCP=yes
-    fi
-  
-  else
-
-    if test -x "$with_scp"; then
-      HAVE_SCP=yes
-      SAGA_SCP=$with_scp
-    else
-      HAVE_SCP=no
-    fi
-
-  fi
-
-
-  AC_SUBST(HAVE_SCP)
-  AC_SUBST(SAGA_SCP)
-])
-
-
 AC_DEFUN([AX_SAGA_CHECK_SSHFS],
 [
   AC_ARG_WITH([sshfs],

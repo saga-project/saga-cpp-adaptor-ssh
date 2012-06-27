@@ -1,0 +1,18 @@
+
+[saga.adaptors.ssh_file]
+  name            = ssh_file
+
+[saga.adaptors.ssh_file.preferences]
+  ssh_bin         = @SAGA_SSH@
+  ssh_opt         = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0
+
+  scp_bin         = @SAGA_SCP@
+  scp_opt         = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0
+
+  sshfs_bin       = @SAGA_SSHFS@
+  sshfs_opt       = -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=0 -o workaround=nonodelay -o transform_symlinks
+
+  sshfs_mnt       = ${HOME}/.saga/adaptors/ssh/ssh_file/mnt/
+  sshfs_keepalive = yes
+  sshfs_ondemand  = yes
+  

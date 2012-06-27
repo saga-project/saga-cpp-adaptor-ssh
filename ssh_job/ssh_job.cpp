@@ -549,9 +549,6 @@ namespace ssh_job
 
     std::vector <std::string> new_hosts;
 
-    // suppress warnings
-    new_args.push_back ("-q");
-
     // add ssh specific args
     if ( ! key_.empty () )
     {
